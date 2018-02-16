@@ -518,6 +518,7 @@ class TestConsumerIntegration(KafkaIntegrationTestCase):
 
         self.assertEqual(len(messages[0]), 100)
         self.assertEqual(len(messages[1]), 100)
+        consumer.close()
 
     def test_kafka_consumer__blocking(self):
         TIMEOUT_MS = 500
@@ -555,6 +556,7 @@ class TestConsumerIntegration(KafkaIntegrationTestCase):
                     messages.add((msg.partition, msg.offset))
         self.assertEqual(len(messages), 5)
         self.assertGreaterEqual(t.interval, TIMEOUT_MS / 1000.0 )
+        consumer.close()
 
     @kafka_versions('>=0.8.1')
     def test_kafka_consumer__offset_commit_resume(self):
@@ -594,6 +596,7 @@ class TestConsumerIntegration(KafkaIntegrationTestCase):
             output_msgs2.append(m)
         self.assert_message_count(output_msgs2, 20)
         self.assertEqual(len(set(output_msgs1) | set(output_msgs2)), 200)
+        consumer2.close()
 
     @kafka_versions('>=0.10.1')
     def test_kafka_consumer_max_bytes_simple(self):
@@ -614,6 +617,7 @@ class TestConsumerIntegration(KafkaIntegrationTestCase):
         self.assertEqual(
             seen_partitions, set([
                 TopicPartition(self.topic, 0), TopicPartition(self.topic, 1)]))
+        consumer.close()
 
     @kafka_versions('>=0.10.1')
     def test_kafka_consumer_max_bytes_one_msg(self):
@@ -639,6 +643,7 @@ class TestConsumerIntegration(KafkaIntegrationTestCase):
 
         fetched_msgs = [next(consumer) for i in range(10)]
         self.assertEqual(len(fetched_msgs), 10)
+        consumer.close()
 
     @kafka_versions('>=0.10.1')
     def test_kafka_consumer_offsets_for_time(self):
@@ -692,6 +697,7 @@ class TestConsumerIntegration(KafkaIntegrationTestCase):
         self.assertEqual(offsets, {
             tp: late_msg.offset + 1
         })
+        consumer.close()
 
     @kafka_versions('>=0.10.1')
     def test_kafka_consumer_offsets_search_many_partitions(self):
@@ -730,6 +736,7 @@ class TestConsumerIntegration(KafkaIntegrationTestCase):
             tp0: p0msg.offset + 1,
             tp1: p1msg.offset + 1
         })
+        consumer.close()
 
     @kafka_versions('<0.10.1')
     def test_kafka_consumer_offsets_for_time_old(self):
